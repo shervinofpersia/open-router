@@ -35,7 +35,7 @@ body {
   color: #fff;
 }
 
-/* استایل پیام‌های سیستم */
+/* استایل پیام‌های ربات */
 .bot-bubble {
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(12px);
@@ -50,7 +50,32 @@ body {
   color: #ececec;
 }
 
-/* بقیه استایل‌ها همان است */
+/* ساختار چیدمان پیام‌ها */
+.msg-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.msg-row.user {
+  justify-content: flex-start;
+}
+
+.msg-row.bot {
+  justify-content: flex-end;
+}
+
+/* استایل برای پیام‌های کاربر */
+.msg-row.user .message {
+  align-self: flex-start;
+}
+
+/* استایل برای پیام‌های ربات */
+.msg-row.bot .message {
+  align-self: flex-end;
+}
+
+/* استایل‌های دیگر ... (در صورت نیاز) */
 </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden text-sm md:text-base selection:bg-white/20 selection:text-white">
@@ -224,100 +249,30 @@ function removeAttachedFile() {
 // افزودن پیام کاربر
 function appendUserMessage(text, index) {
   const wrapper = document.createElement('div');
-  wrapper.className = 'msg-row flex justify-start';
+  wrapper.className = 'msg-row user';
 
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'user-msg-row group relative';
-
-  const bubble = document.createElement('div');
-  bubble.className = 'user-msg';
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
 
   // جایگزینی خطوط جدید با <br>
-  bubble.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
+  messageDiv.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
 
-  // افزودن دکمه‌های عملیات
-  const actions = document.createElement('div');
-  actions.className = 'action-btns mt-1 flex gap-2';
-  actions.innerHTML = `
-    <button onclick="copyMessage(this)" class="text-gray-400 hover:text-white p-1 rounded-lg transition" data-content="${encodeURIComponent(text)}" title="کپی">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-    </button>
-    <button onclick="editUserMessage(${index})" class="text-gray-400 hover:text-white p-1 rounded-lg transition" title="ویرایش پیام">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-      </svg>
-    </button>
-  `;
-
-  wrapper.appendChild(bubble);
-  wrapper.appendChild(actions);
-  msgDiv.appendChild(wrapper);
-  wrapper.appendChild(actions);
-  wrapper.appendChild(bubble);
-  wrapper.appendChild(actions);
-  wrapper.appendChild(bubble);
-  wrapper.appendChild(actions);
-  wrapper.appendChild(bubble);
-  wrapper.appendChild(actions);
-  wrapper.appendChild(bubble);
-
-  // افزودن به چت
+  wrapper.appendChild(messageDiv);
   chatBox.appendChild(wrapper);
-  chatBox.appendChild(document.createElement('div')); // برای فاصله بهتر
   scrollToBottom();
 }
 
 // افزودن پیام ربات
 function appendBotMessage(text, index) {
   const wrapper = document.createElement('div');
-  wrapper.className = 'msg-row flex justify-end';
+  wrapper.className = 'msg-row bot';
 
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'bot-msg group relative';
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
 
-  const avatar = document.createElement('div');
-  avatar.className = 'flex-shrink-0 mt-1 ml-2';
-  avatar.innerHTML = `<img src="https://raw.githubusercontent.com/shervinofpersia/Gpt/refs/heads/main/1712259501956.png" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-white/10 bg-[#2f2f2f] p-1">`;
+  messageDiv.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
 
-  const bubble = document.createElement('div');
-  bubble.className = 'bot-bubble';
-  bubble.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
-
-  // دکمه‌های عملیات
-  const actions = document.createElement('div');
-  actions.className = 'action-btns mt-1 flex gap-2';
-  actions.innerHTML = `
-    <button onclick="copyMessage(this)" class="text-gray-400 hover:text-white p-1 rounded-lg transition" data-content="${encodeURIComponent(text)}" title="کپی">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-    </button>
-    <button onclick="retryMessage(${index})" class="text-gray-400 hover:text-white p-1 rounded-lg transition" title="تلاش مجدد">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path d="M21 2v6h-6"/>
-        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-      </svg>
-    </button>
-  `;
-
-  const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'flex items-start';
-
-  contentWrapper.appendChild(avatar);
-  const msgContent = document.createElement('div');
-  msgContent.className = 'flex-1 flex flex-col max-w-[85%]';
-
-  msgContent.appendChild(bubble);
-  msgContent.appendChild(actions);
-
-  msgDiv.appendChild(contentWrapper);
-  msgDiv.appendChild(msgContent);
-  wrapper.appendChild(msgDiv);
+  wrapper.appendChild(messageDiv);
   chatBox.appendChild(wrapper);
   scrollToBottom();
 }
@@ -431,7 +386,6 @@ async function sendMessage() {
       });
       if (!response.ok) {
         if (response.status === 429) {
-          // خطای سرور، احتمال ترافیک زیاد
           await new Promise(res => setTimeout(res, 4000));
           return sendMessage();
         }
