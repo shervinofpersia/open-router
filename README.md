@@ -1,0 +1,2 @@
+# DeepAI Code Snippet
+A [project](https://livecodes.io/?x=https://github.com/shervinofpersia/open-router/tree/gh-pages/src) created by [☬ SHΞЯVIN™](https://github.com/shervinofpersia) on [LiveCodes](https://livecodes.io).
